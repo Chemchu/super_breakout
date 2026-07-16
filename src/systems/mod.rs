@@ -1,7 +1,7 @@
 use avian2d::{
     collision::collider::{Collider, CollisionLayers},
     dynamics::rigid_body::{
-        GravityScale, Restitution, RigidBody,
+        Friction, GravityScale, Restitution, RigidBody,
         forces::{Forces, WriteRigidBodyForces},
     },
     interpolation::TransformInterpolation,
@@ -59,6 +59,7 @@ pub fn setup_wall(
         GravityScale(0.),
         TransformInterpolation,
         Restitution::new(1.0),
+        Friction::new(0.),
         CollisionLayers::new([CollisionLayer::Wall], [CollisionLayer::Ball]),
     )
 }

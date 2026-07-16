@@ -1,6 +1,6 @@
 use avian2d::{
     collision::collider::{Collider, CollisionLayers},
-    dynamics::rigid_body::{GravityScale, MaxLinearSpeed, Restitution, RigidBody},
+    dynamics::rigid_body::{Friction, GravityScale, MaxLinearSpeed, Restitution, RigidBody},
     interpolation::TransformInterpolation,
 };
 use bevy::{
@@ -18,7 +18,7 @@ use crate::{
     wall::{CollisionLayer, NeedsImpulse},
 };
 
-#[derive(Component, Clone)]
+#[derive(Component, Clone, Debug)]
 pub struct Ball {
     damage: f32,
     bounces: u8,
@@ -74,6 +74,7 @@ pub fn setup_ball(
         GravityScale(0.),
         TransformInterpolation,
         Restitution::new(1.0),
+        Friction::new(0.),
         MaxLinearSpeed(BALL_MAX_SPEED),
         CollisionLayers::new(
             [CollisionLayer::Ball],

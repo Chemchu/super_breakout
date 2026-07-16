@@ -17,3 +17,6 @@ pub const WALL_HEIGHT: f32 = 15.;
 pub const WALL_WIDTH: f32 = 150.;
 pub const WALL_SHAPE: Rectangle = Rectangle::new(WALL_WIDTH, WALL_HEIGHT);
 pub const WALL_COLOR: Color = Color::srgb(0., 1., 0.);
+
+pub const BOUNCE_MAX_ANGLE: f32 = 35.; // In degrees
+pub const BOUNCE_MIN_ANGLE: f32 = 0.; // In degrees
