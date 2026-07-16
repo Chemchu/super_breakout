@@ -1,0 +1,83 @@
+use avian2d::{
+    collision::collider::{Collider, CollisionLayers},
+    dynamics::rigid_body::{GravityScale, MaxLinearSpeed, Restitution, RigidBody},
+    interpolation::TransformInterpolation,
+};
+use bevy::{
+    asset::Handle,
+    ecs::{bundle::Bundle, component::Component, resource::Resource},
+    math::Vec3,
+    mesh::{Mesh, Mesh2d},
+    sprite_render::{ColorMaterial, MeshMaterial2d},
+    transform::components::Transform,
+};
+use bevy_enhanced_input::prelude::InputAction;
+
+use crate::{
+    constants::{BALL_MAX_SPEED, BALL_RADIUS},
+    wall::{CollisionLayer, NeedsImpulse},
+};
+
+#[derive(Component, Clone)]
+pub struct Ball {
+    damage: f32,
+    bounces: u8,
+}
+
+#[derive(Resource)]
+pub struct BallPool {
+    pub capacity: u16,
+}
+
+impl Default for BallPool {
+    fn default() -> Self {
+        BallPool { capacity: 10 }
+    }
+}
+
+impl Default for Ball {
+    fn default() -> Self {
+        Ball {
+            damage: 1.,
+            bounces: 5,
+        }
+    }
+}
+
+impl BallPool {
+    pub fn increase_pool_size_by_n(&mut self, increment: u16) {
+        self.capacity += increment;
+    }
+
+    pub fn decrease_pool_size_by_n(&mut self, decrement: u16) {
+        self.capacity -= decrement;
+    }
+}
+
+#[derive(InputAction)]
+#[action_output(bool)]
+pub struct BallShot;
+
+pub fn setup_ball(
+    translation: Vec3,
+    mesh: Handle<Mesh>,
+    material: Handle<ColorMaterial>,
+) -> impl Bundle {
+    (
+        Ball::default(),
+        NeedsImpulse,
+        Transform::from_translation(translation),
+        Mesh2d(mesh),
+        MeshMaterial2d(material),
+        Collider::circle(BALL_RADIUS),
+        RigidBody::Dynamic,
+        GravityScale(0.),
+        TransformInterpolation,
+        Restitution::new(1.0),
+        MaxLinearSpeed(BALL_MAX_SPEED),
+        CollisionLayers::new(
+            [CollisionLayer::Ball],
+            [CollisionLayer::Wall, CollisionLayer::Paddle],
+        ),
+    )
+}
