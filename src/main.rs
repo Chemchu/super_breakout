@@ -4,7 +4,7 @@ use bevy::{
 };
 use bevy_enhanced_input::context::InputContextAppExt;
 
-use crate::paddle::{Paddle, on_ball_and_paddle_collision, on_paddle_move, on_shoot_ball};
+use crate::paddle::{Paddle, on_paddle_move, on_shoot_ball};
 
 mod ball;
 mod constants;
@@ -23,7 +23,6 @@ fn main() {
         .add_input_context::<Paddle>()
         .add_observer(on_shoot_ball)
         .add_observer(on_paddle_move)
-        .add_observer(on_ball_and_paddle_collision)
         .add_systems(Startup, systems::setup_game)
         .add_systems(FixedUpdate, systems::apply_linear_impulse)
         .run();

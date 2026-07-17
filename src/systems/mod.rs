@@ -22,10 +22,8 @@ use bevy::{
 };
 
 use crate::{
-    constants::{
-        BALL_RADIUS, BALL_SPEED, PADDLE_HEIGHT, WALL_COLOR, WALL_HEIGHT, WALL_SHAPE, WALL_WIDTH,
-    },
-    paddle::setup_paddle,
+    constants::{BALL_SPEED, WALL_COLOR, WALL_HEIGHT, WALL_SHAPE, WALL_WIDTH},
+    paddle::{on_ball_and_paddle_collision, setup_paddle},
     wall::{CollisionLayer, NeedsImpulse, Wall},
 };
 
@@ -35,25 +33,15 @@ pub fn setup_game(
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
     commands.spawn(Camera2d);
-    commands.spawn(setup_paddle());
+    commands
+        .spawn(setup_paddle())
+        .observe(on_ball_and_paddle_collision);
 
-    let wall_pos = Vec3::new(0., (PADDLE_HEIGHT / 2.) + BALL_RADIUS, 0.);
-    let wall_pos_2 = Vec3::new(WALL_WIDTH, (PADDLE_HEIGHT / 2.) + BALL_RADIUS, 0.);
-    let wall_pos_3 = Vec3::new(2. * WALL_WIDTH, (PADDLE_HEIGHT / 2.) + BALL_RADIUS, 0.);
-    let wall_pos_4 = Vec3::new(3. * WALL_WIDTH, (PADDLE_HEIGHT / 2.) + BALL_RADIUS, 0.);
-    let wall_pos_5 = Vec3::new(-2. * WALL_WIDTH, (PADDLE_HEIGHT / 2.) + BALL_RADIUS, 0.);
-    let wall_pos_6 = Vec3::new(-3. * WALL_WIDTH, (PADDLE_HEIGHT / 2.) + BALL_RADIUS, 0.);
-    let wall_pos_7 = Vec3::new(-1. * WALL_WIDTH, (PADDLE_HEIGHT / 2.) + BALL_RADIUS, 0.);
+    let wall_pos = Vec3::new(0., 400., 0.);
     let mesh = meshes.add(WALL_SHAPE);
     let material = materials.add(WALL_COLOR);
 
     commands.spawn(setup_wall(wall_pos, mesh.clone(), material.clone()));
-    commands.spawn(setup_wall(wall_pos_2, mesh.clone(), material.clone()));
-    commands.spawn(setup_wall(wall_pos_3, mesh.clone(), material.clone()));
-    commands.spawn(setup_wall(wall_pos_4, mesh.clone(), material.clone()));
-    commands.spawn(setup_wall(wall_pos_5, mesh.clone(), material.clone()));
-    commands.spawn(setup_wall(wall_pos_6, mesh.clone(), material.clone()));
-    commands.spawn(setup_wall(wall_pos_7, mesh.clone(), material.clone()));
 }
 
 pub fn setup_wall(
@@ -62,7 +50,7 @@ pub fn setup_wall(
     material: Handle<ColorMaterial>,
 ) -> impl Bundle {
     (
-        Wall::default(),
+        Wall,
         Transform::from_translation(translation),
         Mesh2d(mesh),
         MeshMaterial2d(material),

@@ -131,31 +131,25 @@ pub fn on_ball_and_paddle_collision(
     let paddle_entity = event.collider1;
     let ball_entity = event.collider2;
 
-    let Ok(paddle_transform) = paddle_query.get(paddle_entity) else {
-        return;
-    };
-    let Ok((mut forces, ball_transform, ball_mass)) = ball_query.get_mut(ball_entity) else {
-        return;
-    };
+    if let (Ok(paddle_tf), Ok((mut forces, ball_tf, mass))) = (
+        paddle_query.get(paddle_entity),
+        ball_query.get_mut(ball_entity),
+    ) {
+        let offset_x = ball_tf.translation.x - paddle_tf.translation.x;
+        let half_width = PADDLE_WIDTH / 2.0;
 
-    let ball_vel = forces.linear_velocity();
-    let offset_x = ball_transform.translation.x - paddle_transform.translation.x;
-    if offset_x <= PADDLE_OFFSET_MARGIN && offset_x >= -PADDLE_OFFSET_MARGIN {
-        return;
+        if offset_x.abs() <= PADDLE_OFFSET_MARGIN || offset_x.abs() >= half_width {
+            return;
+        }
+
+        let normalized = (offset_x / half_width).clamp(-1.0, 1.0);
+        let bounce_angle = normalized * BOUNCE_MAX_ANGLE;
+        let speed = forces.linear_velocity().length();
+
+        // Using (sin(), cos()) to shift the cartesian system reference point from (1, 0) to (0, 1)
+        let desired_vel = Vec2::new(bounce_angle.sin(), bounce_angle.cos()) * speed;
+
+        let impulse = (desired_vel - forces.linear_velocity()) * mass.value();
+        forces.apply_linear_impulse(impulse);
     }
-    if offset_x >= PADDLE_WIDTH / 2. || offset_x <= -PADDLE_WIDTH / 2. {
-        return;
-    }
-
-    let normalized = (offset_x / (PADDLE_WIDTH / 2.)).clamp(-1.0, 1.0);
-    let bounce_angle = normalized * BOUNCE_MAX_ANGLE;
-
-    let speed: f32 = ball_vel.length();
-    // Using (sin(), cos()) to shift the reference point from the cartesian system from (1, 0) to (0, 1)
-    let desired_dir = Vec2::new(bounce_angle.sin(), bounce_angle.cos());
-    let desired_vel = desired_dir * speed;
-
-    let delta_v: Vec2 = desired_vel - ball_vel;
-    let impulse = delta_v * ball_mass.value();
-    forces.apply_linear_impulse(impulse);
 }
