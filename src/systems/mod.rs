@@ -1,7 +1,7 @@
 use avian2d::{
     collision::{
         collider::{Collider, CollisionLayers},
-        collision_events::{CollisionEventsEnabled, CollisionStart},
+        collision_events::CollisionEventsEnabled,
     },
     dynamics::rigid_body::{
         Friction, GravityScale, Restitution, RigidBody,
@@ -22,14 +22,14 @@ use bevy::{
     math::{Vec2, Vec3},
     mesh::{Mesh, Mesh2d},
     sprite_render::{ColorMaterial, MeshMaterial2d},
+    state::state::States,
     transform::components::Transform,
 };
 
 use crate::{
-    ball::Ball,
     constants::{BALL_SPEED, WALL_COLOR, WALL_HEIGHT, WALL_SHAPE, WALL_WIDTH},
     paddle::{on_ball_and_paddle_collision, setup_paddle},
-    wall::{CollisionLayer, Damage, Died, Health, NeedsImpulse, Wall, on_ball_and_wall_collision},
+    wall::{CollisionLayer, Died, Health, NeedsImpulse, Wall, on_ball_and_wall_collision},
 };
 
 pub fn setup_game(

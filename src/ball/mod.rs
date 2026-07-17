@@ -61,7 +61,27 @@ impl BallPool {
 
 #[derive(InputAction)]
 #[action_output(bool)]
+pub struct Pause;
+
+#[derive(InputAction)]
+#[action_output(bool)]
 pub struct BallShot;
+
+#[derive(InputAction)]
+#[action_output(bool)]
+pub struct Action1;
+
+#[derive(InputAction)]
+#[action_output(bool)]
+pub struct Action2;
+
+#[derive(InputAction)]
+#[action_output(bool)]
+pub struct Action3;
+
+#[derive(InputAction)]
+#[action_output(bool)]
+pub struct Action4;
 
 pub fn setup_ball(
     translation: Vec3,

@@ -30,7 +30,7 @@ use bevy::{
 use bevy_enhanced_input::{
     action::{
         Action,
-        events::{Complete, Fire},
+        events::{Complete, Fire, Start},
     },
     actions,
     binding::relationship::Bindings,
@@ -41,7 +41,7 @@ use bevy_enhanced_input::{
 use bevy_input::keyboard::KeyCode;
 
 use crate::{
-    ball::{Ball, BallPool, BallShot, setup_ball},
+    ball::{Action1, Action2, Action3, Action4, Ball, BallPool, BallShot, Pause, setup_ball},
     constants::{
         BALL_COLOR, BALL_RADIUS, BALL_SHAPE, BOUNCE_MAX_ANGLE, PADDLE_HEIGHT, PADDLE_OFFSET_MARGIN,
         PADDLE_WIDTH, PADDLE_Y_POS,
@@ -75,7 +75,11 @@ pub fn setup_paddle() -> impl Bundle {
         GravityScale(0.),
         actions!(Paddle[
             (Action::<BallShot>::new(), bindings![KeyCode::Space]),
-            (Action::<PaddleHorizontalMovement>::new(), Bindings::spawn((Cardinal::wasd_keys(), Axial::left_stick(), Cardinal::arrows()))),
+            (Action::<PaddleHorizontalMovement>::new(), Bindings::spawn((Axial::left_stick(), Cardinal::arrows()))),
+            (Action::<Action1>::new(), bindings![KeyCode::KeyQ]),
+            (Action::<Action2>::new(), bindings![KeyCode::KeyW]),
+            (Action::<Action3>::new(), bindings![KeyCode::KeyE]),
+            (Action::<Action4>::new(), bindings![KeyCode::KeyR]),
         ]),
         Restitution::new(1.0),
         Friction::new(0.),
@@ -152,4 +156,23 @@ pub fn on_ball_and_paddle_collision(
         let impulse = (desired_vel - forces.linear_velocity()) * mass.value();
         forces.apply_linear_impulse(impulse);
     }
+}
+
+pub fn on_pause_toggle(on: On<Start<Pause>>, commands: Commands) {
+    println!("Pause: {:#?}", on.value);
+
+    // TODO: toggle app state
+}
+
+pub fn on_action1(on: On<Start<Action1>>, commands: Commands) {
+    println!("Action 1: {:#?}", on.value);
+}
+pub fn on_action2(on: On<Start<Action2>>, commands: Commands) {
+    println!("Action 2: {:#?}", on.value);
+}
+pub fn on_action3(on: On<Start<Action3>>, commands: Commands) {
+    println!("Action 3: {:#?}", on.value);
+}
+pub fn on_action4(on: On<Start<Action4>>, commands: Commands) {
+    println!("Action 4: {:#?}", on.value);
 }
