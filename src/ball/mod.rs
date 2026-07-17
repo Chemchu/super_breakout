@@ -18,7 +18,7 @@ use crate::{
         BALL_DEFAULT_BOUNCES, BALL_DEFAULT_DAMAGE, BALL_MAX_SPEED, BALL_POOL_MAX_CAPACITY,
         BALL_RADIUS,
     },
-    wall::{CollisionLayer, NeedsImpulse},
+    wall::{CollisionLayer, Damage, NeedsImpulse},
 };
 
 #[derive(Component, Clone, Debug)]
@@ -70,6 +70,7 @@ pub fn setup_ball(
 ) -> impl Bundle {
     (
         Ball::default(),
+        Damage(1.),
         NeedsImpulse,
         Transform::from_translation(translation),
         Mesh2d(mesh),

@@ -17,13 +17,13 @@ use bevy::{
         observer::On,
         query::With,
         spawn::SpawnRelated,
-        system::{Commands, Query, ResMut, Single},
+        system::{Commands, Query, Res, ResMut, Single},
     },
-    log::debug,
     math::{Vec2, Vec3, primitives::Rectangle},
     mesh::Mesh,
     sprite::Sprite,
     sprite_render::ColorMaterial,
+    time::Time,
     transform::components::Transform,
     utils::default,
 };
@@ -96,12 +96,12 @@ pub fn shoot_ball(
     let mesh = meshes.add(BALL_SHAPE);
     let material = materials.add(BALL_COLOR);
 
-    let _b = commands.spawn(setup_ball(ball_pos, mesh, material));
+    commands.spawn(setup_ball(ball_pos, mesh, material));
     ball_pool.decrease_pool_size_by_n(1);
 }
 
 pub fn on_shoot_ball(
-    _on: On<Complete<BallShot>>,
+    _: On<Complete<BallShot>>,
     commands: Commands,
     meshes: ResMut<Assets<Mesh>>,
     materials: ResMut<Assets<ColorMaterial>>,
@@ -118,7 +118,7 @@ pub fn on_shoot_ball(
 pub fn on_paddle_move(
     on: On<Fire<PaddleHorizontalMovement>>,
     mut paddle_transform: Single<&mut Transform, With<Paddle>>,
-    timer: bevy::ecs::system::Res<bevy::time::Time>,
+    timer: Res<Time>,
 ) {
     paddle_transform.translation += Vec3::new(on.value.x, 0., 0.) * 500. * timer.delta_secs();
 }

@@ -1,5 +1,8 @@
 use avian2d::{
-    collision::collider::{Collider, CollisionLayers},
+    collision::{
+        collider::{Collider, CollisionLayers},
+        collision_events::{CollisionEventsEnabled, CollisionStart},
+    },
     dynamics::rigid_body::{
         Friction, GravityScale, Restitution, RigidBody,
         forces::{Forces, WriteRigidBodyForces},
@@ -12,6 +15,7 @@ use bevy::{
     ecs::{
         bundle::Bundle,
         entity::Entity,
+        observer::On,
         query::With,
         system::{Commands, Query, ResMut},
     },
@@ -22,9 +26,10 @@ use bevy::{
 };
 
 use crate::{
+    ball::Ball,
     constants::{BALL_SPEED, WALL_COLOR, WALL_HEIGHT, WALL_SHAPE, WALL_WIDTH},
     paddle::{on_ball_and_paddle_collision, setup_paddle},
-    wall::{CollisionLayer, NeedsImpulse, Wall},
+    wall::{CollisionLayer, Damage, Died, Health, NeedsImpulse, Wall, on_ball_and_wall_collision},
 };
 
 pub fn setup_game(
@@ -41,7 +46,9 @@ pub fn setup_game(
     let mesh = meshes.add(WALL_SHAPE);
     let material = materials.add(WALL_COLOR);
 
-    commands.spawn(setup_wall(wall_pos, mesh.clone(), material.clone()));
+    commands
+        .spawn(setup_wall(wall_pos, mesh, material))
+        .observe(on_ball_and_wall_collision);
 }
 
 pub fn setup_wall(
@@ -51,6 +58,7 @@ pub fn setup_wall(
 ) -> impl Bundle {
     (
         Wall,
+        Health::new(5.),
         Transform::from_translation(translation),
         Mesh2d(mesh),
         MeshMaterial2d(material),
@@ -61,6 +69,7 @@ pub fn setup_wall(
         Restitution::new(1.0),
         Friction::new(0.),
         CollisionLayers::new([CollisionLayer::Wall], [CollisionLayer::Ball]),
+        CollisionEventsEnabled,
     )
 }
 
@@ -72,4 +81,8 @@ pub fn apply_linear_impulse(
         forces.apply_force(Vec2::new(0., BALL_SPEED));
         commands.entity(entity).remove::<NeedsImpulse>();
     }
+}
+
+pub fn on_died_event(event: On<Died>, mut commands: Commands) {
+    commands.entity(event.entity).despawn();
 }
