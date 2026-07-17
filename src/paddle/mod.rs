@@ -2,21 +2,24 @@ use avian2d::{
     collision::{
         collider::{Collider, CollisionLayers},
         collision_events::{CollisionEventsEnabled, CollisionStart},
-        contact_types::Collisions,
     },
-    dynamics::rigid_body::{Friction, GravityScale, Restitution, RigidBody, forces::Forces},
+    dynamics::rigid_body::{
+        Friction, GravityScale, Restitution, RigidBody,
+        forces::{Forces, ReadRigidBodyForces, WriteRigidBodyForces},
+        mass_properties::components::ComputedMass,
+    },
 };
 use bevy::{
     asset::Assets,
     ecs::{
         bundle::Bundle,
         component::Component,
-        entity::Entity,
         observer::On,
         query::With,
         spawn::SpawnRelated,
         system::{Commands, Query, ResMut, Single},
     },
+    log::debug,
     math::{Vec2, Vec3, primitives::Rectangle},
     mesh::Mesh,
     sprite::Sprite,
@@ -40,7 +43,7 @@ use bevy_input::keyboard::KeyCode;
 use crate::{
     ball::{Ball, BallPool, BallShot, setup_ball},
     constants::{
-        BALL_COLOR, BALL_RADIUS, BALL_SHAPE, BALL_SPEED, BOUNCE_MAX_ANGLE, PADDLE_HEIGHT,
+        BALL_COLOR, BALL_RADIUS, BALL_SHAPE, BOUNCE_MAX_ANGLE, PADDLE_HEIGHT, PADDLE_OFFSET_MARGIN,
         PADDLE_WIDTH, PADDLE_Y_POS,
     },
     wall::CollisionLayer,
@@ -122,52 +125,37 @@ pub fn on_paddle_move(
 
 pub fn on_ball_and_paddle_collision(
     event: On<CollisionStart>,
-    paddle_query: Query<&Paddle>,
-    mut forces_query: Query<(Entity, Forces), With<Ball>>,
-    collisions: Collisions,
+    paddle_query: Query<&Transform, With<Paddle>>,
+    mut ball_query: Query<(Forces, &Transform, &ComputedMass), With<Ball>>,
 ) {
     let paddle_entity = event.collider1;
     let ball_entity = event.collider2;
 
-    if !paddle_query.contains(paddle_entity) {
+    let Ok(paddle_transform) = paddle_query.get(paddle_entity) else {
+        return;
+    };
+    let Ok((mut forces, ball_transform, ball_mass)) = ball_query.get_mut(ball_entity) else {
+        return;
+    };
+
+    let ball_vel = forces.linear_velocity();
+    let offset_x = ball_transform.translation.x - paddle_transform.translation.x;
+    if offset_x <= PADDLE_OFFSET_MARGIN && offset_x >= -PADDLE_OFFSET_MARGIN {
+        return;
+    }
+    if offset_x >= PADDLE_WIDTH / 2. || offset_x <= -PADDLE_WIDTH / 2. {
         return;
     }
 
-    let contact_pair = collisions.get(paddle_entity, ball_entity);
-    if contact_pair.is_none() {
-        return;
-    }
+    let normalized = (offset_x / (PADDLE_WIDTH / 2.)).clamp(-1.0, 1.0);
+    let bounce_angle = normalized * BOUNCE_MAX_ANGLE;
 
-    let manifold = contact_pair.unwrap().manifolds.first();
-    if manifold.is_none() {
-        return;
-    }
+    let speed: f32 = ball_vel.length();
+    // Using (sin(), cos()) to shift the reference point from the cartesian system from (1, 0) to (0, 1)
+    let desired_dir = Vec2::new(bounce_angle.sin(), bounce_angle.cos());
+    let desired_vel = desired_dir * speed;
 
-    let contact_point = manifold.unwrap().points.first();
-    if contact_point.is_none() {
-        return;
-    }
-
-    let collision_contact_point = contact_point.unwrap();
-
-    let ball_contact_point_x = collision_contact_point.anchor1.x;
-    if ball_contact_point_x != 0.00000 {
-        // This is the case when the ball hits the edge of the paddle
-        // In this case we do not need to modify the bounce angle, so we return
-        return;
-    }
-
-    let paddle_contact_point_x = collision_contact_point.anchor2.x;
-    let paddle_hit_percentage = paddle_contact_point_x / (PADDLE_WIDTH / 2.);
-
-    let bounce_angle = BOUNCE_MAX_ANGLE * paddle_hit_percentage;
-
-    for (entity, mut forces) in &mut forces_query {
-        if entity == ball_entity {
-            let bounce_vec = Vec2::from_angle(bounce_angle);
-            println!("{:#?}", bounce_vec);
-
-            // TODO: modificar el angulo de rebote y la velocidad
-        }
-    }
+    let delta_v: Vec2 = desired_vel - ball_vel;
+    let impulse = delta_v * ball_mass.value();
+    forces.apply_linear_impulse(impulse);
 }

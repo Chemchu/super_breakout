@@ -14,7 +14,10 @@ use bevy::{
 use bevy_enhanced_input::prelude::InputAction;
 
 use crate::{
-    constants::{BALL_MAX_SPEED, BALL_RADIUS},
+    constants::{
+        BALL_DEFAULT_BOUNCES, BALL_DEFAULT_DAMAGE, BALL_MAX_SPEED, BALL_POOL_MAX_CAPACITY,
+        BALL_RADIUS,
+    },
     wall::{CollisionLayer, NeedsImpulse},
 };
 
@@ -31,15 +34,17 @@ pub struct BallPool {
 
 impl Default for BallPool {
     fn default() -> Self {
-        BallPool { capacity: 10 }
+        BallPool {
+            capacity: BALL_POOL_MAX_CAPACITY,
+        }
     }
 }
 
 impl Default for Ball {
     fn default() -> Self {
         Ball {
-            damage: 1.,
-            bounces: 5,
+            damage: BALL_DEFAULT_DAMAGE,
+            bounces: BALL_DEFAULT_BOUNCES,
         }
     }
 }

@@ -38,10 +38,22 @@ pub fn setup_game(
     commands.spawn(setup_paddle());
 
     let wall_pos = Vec3::new(0., (PADDLE_HEIGHT / 2.) + BALL_RADIUS, 0.);
+    let wall_pos_2 = Vec3::new(WALL_WIDTH, (PADDLE_HEIGHT / 2.) + BALL_RADIUS, 0.);
+    let wall_pos_3 = Vec3::new(2. * WALL_WIDTH, (PADDLE_HEIGHT / 2.) + BALL_RADIUS, 0.);
+    let wall_pos_4 = Vec3::new(3. * WALL_WIDTH, (PADDLE_HEIGHT / 2.) + BALL_RADIUS, 0.);
+    let wall_pos_5 = Vec3::new(-2. * WALL_WIDTH, (PADDLE_HEIGHT / 2.) + BALL_RADIUS, 0.);
+    let wall_pos_6 = Vec3::new(-3. * WALL_WIDTH, (PADDLE_HEIGHT / 2.) + BALL_RADIUS, 0.);
+    let wall_pos_7 = Vec3::new(-1. * WALL_WIDTH, (PADDLE_HEIGHT / 2.) + BALL_RADIUS, 0.);
     let mesh = meshes.add(WALL_SHAPE);
     let material = materials.add(WALL_COLOR);
 
-    commands.spawn(setup_wall(wall_pos, mesh, material));
+    commands.spawn(setup_wall(wall_pos, mesh.clone(), material.clone()));
+    commands.spawn(setup_wall(wall_pos_2, mesh.clone(), material.clone()));
+    commands.spawn(setup_wall(wall_pos_3, mesh.clone(), material.clone()));
+    commands.spawn(setup_wall(wall_pos_4, mesh.clone(), material.clone()));
+    commands.spawn(setup_wall(wall_pos_5, mesh.clone(), material.clone()));
+    commands.spawn(setup_wall(wall_pos_6, mesh.clone(), material.clone()));
+    commands.spawn(setup_wall(wall_pos_7, mesh.clone(), material.clone()));
 }
 
 pub fn setup_wall(
