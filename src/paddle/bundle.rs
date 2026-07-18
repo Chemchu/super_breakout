@@ -23,11 +23,11 @@ use bevy_input::keyboard::KeyCode;
 
 use crate::{
     ball::components::BallLaunchPoint,
-    common::{components::BounceDeflector, physical_layers::CollisionLayer},
-    input::{
-        Pause,
-        slots::{Slot1, Slot2, Slot3, Slot4},
+    common::{
+        components::{BounceDeflector, Pause},
+        physical_layers::CollisionLayer,
     },
+    input::slots::{Slot1, Slot2, Slot3, Slot4},
     paddle::{
         components::{Paddle, PaddleHorizontalMovement},
         constants::{

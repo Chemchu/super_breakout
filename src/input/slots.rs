@@ -22,6 +22,22 @@ pub struct Slot3;
 #[action_output(bool)]
 pub struct Slot4;
 
+#[derive(InputAction)]
+#[action_output(bool)]
+pub struct Slot5;
+
+#[derive(InputAction)]
+#[action_output(bool)]
+pub struct Slot6;
+
+#[derive(InputAction)]
+#[action_output(bool)]
+pub struct Slot7;
+
+#[derive(InputAction)]
+#[action_output(bool)]
+pub struct Slot8;
+
 macro_rules! dispatch_slot {
     ($fn_name:ident, $slot_ty:ty, $slot:expr) => {
         pub fn $fn_name(
@@ -40,3 +56,7 @@ dispatch_slot!(dispatch_slot1, Slot1, ActionSlot::Slot1);
 dispatch_slot!(dispatch_slot2, Slot2, ActionSlot::Slot2);
 dispatch_slot!(dispatch_slot3, Slot3, ActionSlot::Slot3);
 dispatch_slot!(dispatch_slot4, Slot4, ActionSlot::Slot4);
+dispatch_slot!(dispatch_slot5, Slot5, ActionSlot::Slot5);
+dispatch_slot!(dispatch_slot6, Slot6, ActionSlot::Slot6);
+dispatch_slot!(dispatch_slot7, Slot7, ActionSlot::Slot7);
+dispatch_slot!(dispatch_slot8, Slot8, ActionSlot::Slot8);

@@ -10,7 +10,7 @@ mod wall;
 use crate::common::game_states::AppState;
 use ball::BallPlugin;
 use common::CommonPlugin;
-use game_orchestrator::GamePlugin;
+use game_orchestrator::GameOrchestratorPlugin;
 use input::InputPlugin;
 use paddle::PaddlePlugin;
 use wall::WallPlugin;
@@ -29,7 +29,7 @@ fn main() {
             BallPlugin,
             PaddlePlugin,
             WallPlugin,
-            GamePlugin,
+            GameOrchestratorPlugin,
         ))
         .run();
 }

@@ -17,9 +17,9 @@ use crate::{
     },
 };
 
-pub struct GamePlugin;
+pub struct GameOrchestratorPlugin;
 
-impl Plugin for GamePlugin {
+impl Plugin for GameOrchestratorPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(Startup, (setup_game, setup_default_loadout));
     }

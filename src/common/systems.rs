@@ -17,12 +17,9 @@ use bevy::{
 };
 use bevy_enhanced_input::action::events::Start;
 
-use crate::{
-    common::{
-        components::{BounceDeflector, Bounceable, Damage, Health, NeedsImpulse},
-        events::Died,
-    },
-    input::Pause,
+use crate::common::{
+    components::{BounceDeflector, Bounceable, Damage, Health, NeedsImpulse, Pause},
+    events::Died,
 };
 
 pub fn on_damageable_collision(

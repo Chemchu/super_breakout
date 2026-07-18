@@ -1,13 +1,11 @@
 use bevy::app::{App, Plugin};
-use bevy_enhanced_input::prelude::InputAction;
 
-use crate::input::slots::{dispatch_slot1, dispatch_slot2, dispatch_slot3, dispatch_slot4};
+use crate::input::slots::{
+    dispatch_slot1, dispatch_slot2, dispatch_slot3, dispatch_slot4, dispatch_slot5, dispatch_slot6,
+    dispatch_slot7, dispatch_slot8,
+};
 
 pub mod slots;
-
-#[derive(InputAction)]
-#[action_output(bool)]
-pub struct Pause;
 
 pub struct InputPlugin;
 
@@ -16,6 +14,10 @@ impl Plugin for InputPlugin {
         app.add_observer(dispatch_slot1)
             .add_observer(dispatch_slot2)
             .add_observer(dispatch_slot3)
-            .add_observer(dispatch_slot4);
+            .add_observer(dispatch_slot4)
+            .add_observer(dispatch_slot5)
+            .add_observer(dispatch_slot6)
+            .add_observer(dispatch_slot7)
+            .add_observer(dispatch_slot8);
     }
 }
