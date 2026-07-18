@@ -2,7 +2,7 @@ use bevy::{DefaultPlugins, app::App, state::app::AppExtStates};
 
 mod ball;
 mod common;
-mod game;
+mod game_orchestrator;
 mod input;
 mod paddle;
 mod wall;
@@ -10,7 +10,7 @@ mod wall;
 use crate::common::game_states::AppState;
 use ball::BallPlugin;
 use common::CommonPlugin;
-use game::GamePlugin;
+use game_orchestrator::GamePlugin;
 use input::InputPlugin;
 use paddle::PaddlePlugin;
 use wall::WallPlugin;
