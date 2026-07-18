@@ -63,7 +63,7 @@ pub fn get_paddle_bundle() -> impl Bundle {
         GravityScale(0.),
         actions!(Paddle[
             (Action::<Pause>::new(), bindings![KeyCode::Escape]),
-            (Action::<Slot1>::new(), bindings![KeyCode::KeyQ]),
+            (Action::<Slot1>::new(), bindings![KeyCode::Space]),
             (Action::<Slot2>::new(), bindings![KeyCode::KeyW]),
             (Action::<Slot3>::new(), bindings![KeyCode::KeyE]),
             (Action::<Slot4>::new(), bindings![KeyCode::KeyR]),

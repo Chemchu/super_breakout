@@ -3,13 +3,10 @@ use bevy::{
     math::Vec2,
 };
 
-use crate::ball::constants::{BALL_DEFAULT_BOUNCES, BALL_DEFAULT_DAMAGE, BALL_POOL_MAX_CAPACITY};
+use crate::ball::constants::BALL_POOL_MAX_CAPACITY;
 
-#[derive(Component, Clone, Debug)]
-pub struct Ball {
-    damage: f32,
-    bounces: u8,
-}
+#[derive(Component, Default, Clone, Debug)]
+pub struct Ball;
 
 #[derive(Resource)]
 pub struct BallPool {
@@ -20,15 +17,6 @@ impl Default for BallPool {
     fn default() -> Self {
         BallPool {
             capacity: BALL_POOL_MAX_CAPACITY,
-        }
-    }
-}
-
-impl Default for Ball {
-    fn default() -> Self {
-        Ball {
-            damage: BALL_DEFAULT_DAMAGE,
-            bounces: BALL_DEFAULT_BOUNCES,
         }
     }
 }
