@@ -24,7 +24,7 @@ use crate::{
 };
 
 pub fn get_ball_bundle(
-    translation: Vec3,
+    translation: Vec2,
     mesh: Handle<Mesh>,
     material: Handle<ColorMaterial>,
 ) -> impl Bundle {
@@ -34,7 +34,7 @@ pub fn get_ball_bundle(
         NeedsImpulse {
             impulse: Vec2::new(0., BALL_SPEED),
         },
-        Transform::from_translation(translation),
+        Transform::from_translation(Vec3::new(translation.x, translation.y, 0.0)),
         Mesh2d(mesh),
         MeshMaterial2d(material),
         Collider::circle(BALL_RADIUS),

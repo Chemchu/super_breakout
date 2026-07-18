@@ -4,7 +4,7 @@ use bevy::{
         observer::On,
         system::{Commands, ResMut, Single},
     },
-    math::Vec3,
+    math::Vec2,
     mesh::Mesh,
     sprite_render::ColorMaterial,
     transform::components::Transform,
@@ -25,7 +25,9 @@ pub fn launch_ball(
     launch_point: Single<(&Transform, &BallLaunchPoint)>,
 ) {
     let (transform, launch) = *launch_point;
-    let ball_pos = transform.translation + launch.surface_offset + Vec3::new(0., BALL_RADIUS, 0.);
+    let ball_pos = Vec2::new(transform.translation.x, transform.translation.y)
+        + launch.surface_offset
+        + Vec2::new(0., BALL_RADIUS);
 
     let mesh = meshes.add(BALL_SHAPE);
     let material = materials.add(BALL_COLOR);

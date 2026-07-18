@@ -1,6 +1,6 @@
 use bevy::{
     ecs::{component::Component, resource::Resource},
-    math::Vec3,
+    math::Vec2,
 };
 
 use crate::ball::constants::{BALL_DEFAULT_BOUNCES, BALL_DEFAULT_DAMAGE, BALL_POOL_MAX_CAPACITY};
@@ -45,5 +45,5 @@ impl BallPool {
 
 #[derive(Component, Clone)]
 pub struct BallLaunchPoint {
-    pub surface_offset: Vec3,
+    pub surface_offset: Vec2,
 }
