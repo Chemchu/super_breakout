@@ -1,0 +1,39 @@
+use bevy::ecs::{resource::Resource, system::Commands};
+use std::collections::HashMap;
+
+use crate::ball::events::LaunchBallRequested;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum GameEffect {
+    LaunchBall,
+    // future: SlowTime, MultiBall, Shield...
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum ActionSlot {
+    Slot1,
+    Slot2,
+    Slot3,
+    Slot4,
+}
+
+#[derive(Resource, Default)]
+pub struct ActionLoadout {
+    bindings: HashMap<ActionSlot, GameEffect>,
+}
+
+impl ActionLoadout {
+    pub fn bind(&mut self, slot: ActionSlot, effect: GameEffect) {
+        self.bindings.insert(slot, effect);
+    }
+
+    pub fn effect_for(&self, slot: ActionSlot) -> Option<GameEffect> {
+        self.bindings.get(&slot).copied()
+    }
+}
+
+pub fn dispatch(effect: GameEffect, commands: &mut Commands) {
+    match effect {
+        GameEffect::LaunchBall => commands.trigger(LaunchBallRequested),
+    }
+}
