@@ -27,7 +27,7 @@ use crate::{
         components::{BounceDeflector, Pause},
         physical_layers::CollisionLayer,
     },
-    input::slots::{Slot1, Slot2, Slot3, Slot4},
+    input::slots::{Slot1, Slot2, Slot3, Slot4, Slot5},
     paddle::{
         components::{Paddle, PaddleHorizontalMovement},
         constants::{
@@ -64,9 +64,10 @@ pub fn get_paddle_bundle() -> impl Bundle {
         actions!(Paddle[
             (Action::<Pause>::new(), bindings![KeyCode::Escape]),
             (Action::<Slot1>::new(), bindings![KeyCode::Space]),
-            (Action::<Slot2>::new(), bindings![KeyCode::KeyW]),
-            (Action::<Slot3>::new(), bindings![KeyCode::KeyE]),
-            (Action::<Slot4>::new(), bindings![KeyCode::KeyR]),
+            (Action::<Slot2>::new(), bindings![KeyCode::KeyQ]),
+            (Action::<Slot3>::new(), bindings![KeyCode::KeyW]),
+            (Action::<Slot4>::new(), bindings![KeyCode::KeyE]),
+            (Action::<Slot5>::new(), bindings![KeyCode::KeyR]),
             (Action::<PaddleHorizontalMovement>::new(), Bindings::spawn((Axial::left_stick(), Cardinal::arrows()))),
         ]),
         Restitution::new(1.0),

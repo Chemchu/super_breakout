@@ -1,11 +1,13 @@
 use bevy::ecs::{resource::Resource, system::Commands};
 use std::collections::HashMap;
 
-use crate::ball::events::LaunchBallRequested;
+use crate::ball::events::{DoubleBallRequested, LaunchBallRequested, TripleBallRequested};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum GameEffect {
     LaunchBall,
+    Double,
+    Triple,
     // future: SlowTime, MultiBall, Shield...
 }
 
@@ -39,5 +41,7 @@ impl ActionLoadout {
 pub fn dispatch(effect: GameEffect, commands: &mut Commands) {
     match effect {
         GameEffect::LaunchBall => commands.trigger(LaunchBallRequested),
+        GameEffect::Double => commands.trigger(DoubleBallRequested),
+        GameEffect::Triple => commands.trigger(TripleBallRequested),
     }
 }

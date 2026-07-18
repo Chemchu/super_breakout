@@ -4,17 +4,16 @@ use avian2d::{
     interpolation::TransformInterpolation,
 };
 use bevy::{
-    asset::Handle,
-    ecs::bundle::Bundle,
+    ecs::bundle::{Bundle, NoBundleEffect},
     math::{Vec2, Vec3},
-    mesh::{Mesh, Mesh2d},
-    sprite_render::{ColorMaterial, MeshMaterial2d},
+    mesh::Mesh2d,
+    sprite_render::MeshMaterial2d,
     transform::components::Transform,
 };
 
 use crate::{
     ball::{
-        components::Ball,
+        components::{Ball, BallAssets},
         constants::{BALL_MAX_SPEED, BALL_RADIUS, BALL_SPEED},
     },
     common::{
@@ -25,18 +24,18 @@ use crate::{
 
 pub fn get_ball_bundle(
     translation: Vec2,
-    mesh: Handle<Mesh>,
-    material: Handle<ColorMaterial>,
-) -> impl Bundle {
+    launch_direction: Option<Vec2>,
+    assets: &BallAssets,
+) -> impl Bundle<Effect: NoBundleEffect> {
     (
         Ball::default(),
         Damage(1.),
         NeedsImpulse {
-            impulse: Vec2::new(0., BALL_SPEED),
+            impulse: launch_direction.unwrap_or_default().normalize_or_zero() * BALL_SPEED,
         },
         Transform::from_translation(Vec3::new(translation.x, translation.y, 0.0)),
-        Mesh2d(mesh),
-        MeshMaterial2d(material),
+        Mesh2d(assets.mesh.clone()),
+        MeshMaterial2d(assets.material.clone()),
         Collider::circle(BALL_RADIUS),
         RigidBody::Dynamic,
         GravityScale(0.),

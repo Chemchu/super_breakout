@@ -41,4 +41,5 @@ fn setup_game(
 
 fn setup_default_loadout(mut loadout: ResMut<ActionLoadout>) {
     loadout.bind(ActionSlot::Slot1, GameEffect::LaunchBall);
+    loadout.bind(ActionSlot::Slot2, GameEffect::Double);
 }
