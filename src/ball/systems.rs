@@ -16,6 +16,7 @@ use bevy::{
     transform::components::Transform,
 };
 
+// BUG: the Single is not correct. There are a lot of entities with Transform and optional BallLauchPoint
 pub fn on_launch_ball_requested(
     _: On<LaunchBallRequested>,
     mut commands: Commands,
@@ -23,7 +24,6 @@ pub fn on_launch_ball_requested(
     ball_assets: Res<BallAssets>,
     launch_point: Single<(&Transform, Option<&BallLaunchPoint>)>,
 ) {
-    println!("Eyyyy");
     if ball_pool.capacity == 0 {
         return;
     }
