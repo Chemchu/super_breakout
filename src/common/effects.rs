@@ -1,13 +1,16 @@
 use bevy::ecs::{resource::Resource, system::Commands};
 use std::collections::HashMap;
 
-use crate::ball::events::{DoubleBallRequested, LaunchBallRequested, TripleBallRequested};
+use crate::ball::events::{
+    DoubleBallRequested, LaunchBallRequested, ReverseBallRequested, TripleBallRequested,
+};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum GameEffect {
     LaunchBall,
-    Double,
-    Triple,
+    DoubleBall,
+    TripleBall,
+    ReverseBall,
     // future: SlowTime, MultiBall, Shield...
 }
 
@@ -29,8 +32,10 @@ pub struct ActionLoadout {
 }
 
 impl ActionLoadout {
-    pub fn bind(&mut self, slot: ActionSlot, effect: GameEffect) {
-        self.bindings.insert(slot, effect);
+    pub fn binds(&mut self, slots: HashMap<ActionSlot, GameEffect>) {
+        slots.iter().for_each(|(slot, effect)| {
+            self.bindings.insert(*slot, *effect);
+        });
     }
 
     pub fn effect_for(&self, slot: ActionSlot) -> Option<GameEffect> {
@@ -41,7 +46,8 @@ impl ActionLoadout {
 pub fn dispatch(effect: GameEffect, commands: &mut Commands) {
     match effect {
         GameEffect::LaunchBall => commands.trigger(LaunchBallRequested),
-        GameEffect::Double => commands.trigger(DoubleBallRequested),
-        GameEffect::Triple => commands.trigger(TripleBallRequested),
+        GameEffect::DoubleBall => commands.trigger(DoubleBallRequested),
+        GameEffect::TripleBall => commands.trigger(TripleBallRequested),
+        GameEffect::ReverseBall => commands.trigger(ReverseBallRequested),
     }
 }

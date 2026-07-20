@@ -2,9 +2,15 @@ use crate::ball::{
     bundle::get_ball_bundle,
     components::{Ball, BallAssets, BallLaunchPoint, BallPool},
     constants::{BALL_RADIUS, FAN_ANGLE_RAD},
-    events::{DoubleBallRequested, LaunchBallRequested},
+    events::{DoubleBallRequested, LaunchBallRequested, ReverseBallRequested, TripleBallRequested},
 };
-use avian2d::dynamics::rigid_body::LinearVelocity;
+use avian2d::dynamics::rigid_body::{
+    LinearVelocity,
+    forces::{ReadRigidBodyForces, WriteRigidBodyForces},
+    mass_properties::components::ComputedMass,
+};
+
+use avian2d::dynamics::rigid_body::forces::Forces;
 use bevy::{
     ecs::{
         entity::Entity,
@@ -60,4 +66,59 @@ pub fn on_double_ball_requested(
     for (entity, _, _) in &ball_query {
         commands.entity(entity).despawn();
     }
+}
+
+pub fn on_triple_ball_requested(
+    _: On<TripleBallRequested>,
+    mut commands: Commands,
+    ball_assets: Res<BallAssets>,
+    ball_query: Query<(&Transform, &LinearVelocity), With<Ball>>,
+) {
+    let left_rot = Rot2::radians(FAN_ANGLE_RAD);
+    let right_rot = Rot2::radians(-FAN_ANGLE_RAD);
+
+    let ball_bundles = ball_query
+        .iter()
+        .flat_map(|(tf, vel)| {
+            let base_dir = vel.xy().normalize_or(Vec2::Y);
+
+            [
+                get_ball_bundle(tf.translation.xy(), left_rot * base_dir, &ball_assets),
+                get_ball_bundle(tf.translation.xy(), right_rot * base_dir, &ball_assets),
+            ]
+        })
+        .collect::<Vec<_>>();
+
+    commands.spawn_batch(ball_bundles);
+}
+
+pub fn on_reverse_ball_requested(
+    _: On<ReverseBallRequested>,
+    mut commands: Commands,
+    mut forces_query: Query<(Forces, &ComputedMass), With<Ball>>,
+) {
+    for (mut forces, mass) in &mut forces_query {
+        let speed = forces.linear_velocity().length();
+        let impulse = -2.0 * forces.linear_velocity() * mass.value();
+        forces.apply_linear_impulse(impulse);
+    }
+
+    /* if let Ok((mut forces, mass)) = forces_query.get_mut(bounced) {
+        let offset_x = ball_tf.translation.x - deflector_tf.translation.x;
+        let half_width = deflector_data.width / 2.0;
+
+        if offset_x.abs() <= deflector_data.dead_zone || offset_x.abs() >= half_width {
+            return;
+        }
+
+        let normalized = (offset_x / half_width).clamp(-1.0, 1.0);
+        let bounce_angle = normalized * deflector_data.max_angle;
+        let speed = forces.linear_velocity().length();
+
+        // Using (sin(), cos()) to shift the cartesian system reference point from (1, 0) to (0, 1)
+        let desired_vel = Vec2::new(bounce_angle.sin(), bounce_angle.cos()) * speed;
+        let impulse = (desired_vel - forces.linear_velocity()) * mass.value();
+
+        forces.apply_linear_impulse(impulse);
+    } */
 }

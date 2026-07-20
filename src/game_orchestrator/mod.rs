@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use bevy::{
     app::{App, Plugin, Startup},
     asset::Assets,
@@ -40,6 +42,10 @@ fn setup_game(
 }
 
 fn setup_default_loadout(mut loadout: ResMut<ActionLoadout>) {
-    loadout.bind(ActionSlot::Slot1, GameEffect::LaunchBall);
-    loadout.bind(ActionSlot::Slot2, GameEffect::Double);
+    loadout.binds(HashMap::from([
+        (ActionSlot::Slot1, GameEffect::LaunchBall),
+        (ActionSlot::Slot2, GameEffect::DoubleBall),
+        (ActionSlot::Slot3, GameEffect::TripleBall),
+        (ActionSlot::Slot4, GameEffect::ReverseBall),
+    ]));
 }

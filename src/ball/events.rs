@@ -8,3 +8,6 @@ pub struct DoubleBallRequested;
 
 #[derive(Event)]
 pub struct TripleBallRequested;
+
+#[derive(Event)]
+pub struct ReverseBallRequested;
