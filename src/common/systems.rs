@@ -52,7 +52,7 @@ pub fn apply_linear_impulse(
 }
 
 pub fn on_died_event(event: On<Died>, mut commands: Commands) {
-    commands.entity(event.entity).despawn();
+    commands.entity(event.entity).try_despawn();
 }
 
 pub fn on_bounce_collision(
