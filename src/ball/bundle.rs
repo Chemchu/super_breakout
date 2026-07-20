@@ -24,14 +24,14 @@ use crate::{
 
 pub fn get_ball_bundle(
     translation: Vec2,
-    launch_direction: Option<Vec2>,
+    launch_direction: Vec2,
     assets: &BallAssets,
 ) -> impl Bundle<Effect: NoBundleEffect> {
     (
         Ball::default(),
         Damage(1.),
         NeedsImpulse {
-            impulse: launch_direction.unwrap_or_default().normalize_or_zero() * BALL_SPEED,
+            impulse: launch_direction.normalize_or_zero() * BALL_SPEED,
         },
         Transform::from_translation(Vec3::new(translation.x, translation.y, 0.0)),
         Mesh2d(assets.mesh.clone()),

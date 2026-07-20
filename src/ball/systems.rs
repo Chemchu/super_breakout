@@ -9,35 +9,28 @@ use bevy::{
     ecs::{
         entity::Entity,
         observer::On,
-        query::With,
+        query::{With, Without},
         system::{Commands, Query, Res, ResMut, Single},
     },
     math::{Rot2, Vec2, Vec2Swizzles, Vec3Swizzles},
     transform::components::Transform,
 };
 
-// BUG: the Single is not correct. There are a lot of entities with Transform and optional BallLauchPoint
 pub fn on_launch_ball_requested(
     _: On<LaunchBallRequested>,
     mut commands: Commands,
     mut ball_pool: ResMut<BallPool>,
     ball_assets: Res<BallAssets>,
-    launch_point: Single<(&Transform, Option<&BallLaunchPoint>)>,
+    launch_point: Single<(&Transform, &BallLaunchPoint), Without<Ball>>,
 ) {
     if ball_pool.capacity == 0 {
         return;
     }
 
     let (transform, launch) = *launch_point;
-    let ball_pos = transform.translation.xy()
-        + launch
-            .unwrap_or(&BallLaunchPoint {
-                surface_offset: Vec2::new(0.0, 0.0),
-            })
-            .surface_offset
-        + Vec2::new(0., BALL_RADIUS);
+    let ball_pos = transform.translation.xy() + launch.surface_offset + Vec2::new(0., BALL_RADIUS);
 
-    commands.spawn(get_ball_bundle(ball_pos, None, &ball_assets));
+    commands.spawn(get_ball_bundle(ball_pos, Vec2::Y, &ball_assets));
     ball_pool.decrease_pool_size_by_n(1);
 }
 
@@ -56,12 +49,8 @@ pub fn on_double_ball_requested(
             let base_dir = vel.xy().normalize_or(Vec2::Y);
 
             [
-                get_ball_bundle(tf.translation.xy(), Some(left_rot * base_dir), &ball_assets),
-                get_ball_bundle(
-                    tf.translation.xy(),
-                    Some(right_rot * base_dir),
-                    &ball_assets,
-                ),
+                get_ball_bundle(tf.translation.xy(), left_rot * base_dir, &ball_assets),
+                get_ball_bundle(tf.translation.xy(), right_rot * base_dir, &ball_assets),
             ]
         })
         .collect::<Vec<_>>();
