@@ -94,31 +94,10 @@ pub fn on_triple_ball_requested(
 
 pub fn on_reverse_ball_requested(
     _: On<ReverseBallRequested>,
-    mut commands: Commands,
     mut forces_query: Query<(Forces, &ComputedMass), With<Ball>>,
 ) {
     for (mut forces, mass) in &mut forces_query {
-        let speed = forces.linear_velocity().length();
         let impulse = -2.0 * forces.linear_velocity() * mass.value();
         forces.apply_linear_impulse(impulse);
     }
-
-    /* if let Ok((mut forces, mass)) = forces_query.get_mut(bounced) {
-        let offset_x = ball_tf.translation.x - deflector_tf.translation.x;
-        let half_width = deflector_data.width / 2.0;
-
-        if offset_x.abs() <= deflector_data.dead_zone || offset_x.abs() >= half_width {
-            return;
-        }
-
-        let normalized = (offset_x / half_width).clamp(-1.0, 1.0);
-        let bounce_angle = normalized * deflector_data.max_angle;
-        let speed = forces.linear_velocity().length();
-
-        // Using (sin(), cos()) to shift the cartesian system reference point from (1, 0) to (0, 1)
-        let desired_vel = Vec2::new(bounce_angle.sin(), bounce_angle.cos()) * speed;
-        let impulse = (desired_vel - forces.linear_velocity()) * mass.value();
-
-        forces.apply_linear_impulse(impulse);
-    } */
 }
