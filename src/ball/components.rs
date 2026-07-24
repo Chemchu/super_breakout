@@ -11,7 +11,7 @@ use crate::ball::constants::{BALL_COLOR, BALL_POOL_MAX_CAPACITY, BALL_SHAPE};
 #[derive(Component, Default, Clone, Debug)]
 pub struct Ball;
 
-#[derive(Resource)]
+#[derive(Resource, Clone)]
 pub struct BallAssets {
     pub mesh: Handle<Mesh>,
     pub material: Handle<ColorMaterial>,
@@ -30,24 +30,49 @@ impl FromWorld for BallAssets {
 
 #[derive(Resource)]
 pub struct BallPool {
-    pub capacity: u16,
+    max_capacity: u16,
+    pub current_ball_count: u16,
 }
 
 impl Default for BallPool {
     fn default() -> Self {
         BallPool {
-            capacity: BALL_POOL_MAX_CAPACITY,
+            max_capacity: BALL_POOL_MAX_CAPACITY,
+            current_ball_count: 0,
         }
     }
 }
 
 impl BallPool {
-    pub fn increase_pool_size_by_n(&mut self, increment: u16) {
-        self.capacity += increment;
+    pub fn has_available_balls(&mut self, balls_needed: u16) -> bool {
+        self.max_capacity - (self.current_ball_count + balls_needed) > 0
     }
 
-    pub fn decrease_pool_size_by_n(&mut self, decrement: u16) {
-        self.capacity -= decrement;
+    pub fn increase_current_ball_count<F>(&mut self, increment: u16, spawn_balls: F)
+    where
+        F: FnOnce(u16),
+    {
+        let spawned_balls = if self.current_ball_count + increment > self.max_capacity {
+            self.max_capacity - self.current_ball_count
+        } else {
+            increment
+        };
+
+        self.current_ball_count += spawned_balls;
+        spawn_balls(spawned_balls);
+    }
+
+    pub fn decrease_current_ball_count<F>(&mut self, decrement: u16, despawn_balls: F)
+    where
+        F: FnOnce(),
+    {
+        self.current_ball_count = if self.current_ball_count < decrement {
+            0
+        } else {
+            self.current_ball_count - decrement
+        };
+
+        despawn_balls();
     }
 }
 

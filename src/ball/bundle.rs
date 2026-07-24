@@ -25,7 +25,7 @@ use crate::{
 pub fn get_ball_bundle(
     translation: Vec2,
     launch_direction: Vec2,
-    assets: &BallAssets,
+    assets: BallAssets,
 ) -> impl Bundle<Effect: NoBundleEffect> {
     (
         Ball::default(),
@@ -34,8 +34,8 @@ pub fn get_ball_bundle(
             impulse: launch_direction.normalize_or_zero() * BALL_SPEED,
         },
         Transform::from_translation(Vec3::new(translation.x, translation.y, 0.0)),
-        Mesh2d(assets.mesh.clone()),
-        MeshMaterial2d(assets.material.clone()),
+        Mesh2d(assets.mesh),
+        MeshMaterial2d(assets.material),
         Collider::circle(BALL_RADIUS),
         RigidBody::Dynamic,
         GravityScale(0.),

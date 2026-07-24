@@ -29,23 +29,31 @@ pub fn on_launch_ball_requested(
     ball_assets: Res<BallAssets>,
     launch_point: Single<(&Transform, &BallLaunchPoint), Without<Ball>>,
 ) {
-    if ball_pool.capacity == 0 {
-        return;
+    if ball_pool.has_available_balls(1) {
+        let (transform, launch) = *launch_point;
+        let ball_pos =
+            transform.translation.xy() + launch.surface_offset + Vec2::new(0., BALL_RADIUS);
+
+        let owned_assets = ball_assets.clone();
+
+        ball_pool.increase_current_ball_count(1, move |increase_ammount: u16| {
+            commands
+                .spawn_batch((0..increase_ammount).map(move |_| {
+                    get_ball_bundle(ball_pos.clone(), Vec2::Y, owned_assets.clone())
+                }));
+        });
     }
-
-    let (transform, launch) = *launch_point;
-    let ball_pos = transform.translation.xy() + launch.surface_offset + Vec2::new(0., BALL_RADIUS);
-
-    commands.spawn(get_ball_bundle(ball_pos, Vec2::Y, &ball_assets));
-    ball_pool.decrease_pool_size_by_n(1);
 }
 
 pub fn on_double_ball_requested(
     _: On<DoubleBallRequested>,
     mut commands: Commands,
     ball_assets: Res<BallAssets>,
+    ball_pool: Res<BallPool>,
     ball_query: Query<(Entity, &Transform, &LinearVelocity), With<Ball>>,
 ) {
+    // TODO: fix the max balls thingy
+    /*     if ball_pool.capacity {} */
     let left_rot = Rot2::radians(FAN_ANGLE_RAD);
     let right_rot = Rot2::radians(-FAN_ANGLE_RAD);
 
@@ -55,8 +63,16 @@ pub fn on_double_ball_requested(
             let base_dir = vel.xy().normalize_or(Vec2::Y);
 
             [
-                get_ball_bundle(tf.translation.xy(), left_rot * base_dir, &ball_assets),
-                get_ball_bundle(tf.translation.xy(), right_rot * base_dir, &ball_assets),
+                get_ball_bundle(
+                    tf.translation.xy(),
+                    left_rot * base_dir,
+                    ball_assets.clone(),
+                ),
+                get_ball_bundle(
+                    tf.translation.xy(),
+                    right_rot * base_dir,
+                    ball_assets.clone(),
+                ),
             ]
         })
         .collect::<Vec<_>>();
@@ -83,8 +99,16 @@ pub fn on_triple_ball_requested(
             let base_dir = vel.xy().normalize_or(Vec2::Y);
 
             [
-                get_ball_bundle(tf.translation.xy(), left_rot * base_dir, &ball_assets),
-                get_ball_bundle(tf.translation.xy(), right_rot * base_dir, &ball_assets),
+                get_ball_bundle(
+                    tf.translation.xy(),
+                    left_rot * base_dir,
+                    ball_assets.clone(),
+                ),
+                get_ball_bundle(
+                    tf.translation.xy(),
+                    right_rot * base_dir,
+                    ball_assets.clone(),
+                ),
             ]
         })
         .collect::<Vec<_>>();
