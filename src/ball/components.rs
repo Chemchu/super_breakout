@@ -44,14 +44,14 @@ impl Default for BallPool {
 }
 
 impl BallPool {
-    pub fn has_available_balls(&mut self, balls_needed: u16) -> bool {
-        self.max_capacity - (self.current_ball_count + balls_needed) > 0
-    }
-
     pub fn increase_current_ball_count<F>(&mut self, increment: u16, spawn_balls: F)
     where
         F: FnOnce(u16),
     {
+        if self.max_capacity - self.current_ball_count <= 0 {
+            return;
+        }
+
         let spawned_balls = if self.current_ball_count + increment > self.max_capacity {
             self.max_capacity - self.current_ball_count
         } else {
@@ -64,7 +64,7 @@ impl BallPool {
 
     pub fn decrease_current_ball_count<F>(&mut self, decrement: u16, despawn_balls: F)
     where
-        F: FnOnce(),
+        F: FnOnce(u16),
     {
         self.current_ball_count = if self.current_ball_count < decrement {
             0
@@ -72,7 +72,7 @@ impl BallPool {
             self.current_ball_count - decrement
         };
 
-        despawn_balls();
+        despawn_balls(1);
     }
 }
 

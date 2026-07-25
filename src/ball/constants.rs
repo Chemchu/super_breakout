@@ -1,6 +1,7 @@
 use bevy::{color::Color, math::primitives::Circle};
 
-pub const BALL_POOL_MAX_CAPACITY: u16 = 300;
+pub const BALL_ONE_UNIT: u16 = 1;
+pub const BALL_POOL_MAX_CAPACITY: u16 = 5;
 pub const BALL_RADIUS: f32 = 15.;
 pub const BALL_SHAPE: Circle = Circle::new(BALL_RADIUS);
 pub const BALL_COLOR: Color = Color::srgb(0., 0., 1.);
