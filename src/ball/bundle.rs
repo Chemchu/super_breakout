@@ -17,7 +17,7 @@ use crate::{
         constants::{BALL_MAX_SPEED, BALL_RADIUS, BALL_SPEED},
     },
     common::{
-        components::{Damage, NeedsImpulse},
+        components::{Bounceable, Damage, NeedsImpulse},
         physical_layers::CollisionLayer,
     },
 };
@@ -33,6 +33,7 @@ pub fn get_ball_bundle(
         NeedsImpulse {
             impulse: launch_direction.normalize_or_zero() * BALL_SPEED,
         },
+        Bounceable,
         Transform::from_translation(Vec3::new(translation.x, translation.y, 0.0)),
         Mesh2d(assets.mesh),
         MeshMaterial2d(assets.material),
