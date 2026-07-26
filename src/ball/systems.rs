@@ -31,18 +31,17 @@ pub fn on_launch_ball_requested(
 ) {
     let (transform, launch) = *launch_point;
     let ball_pos = transform.translation.xy() + launch.surface_offset + Vec2::new(0., BALL_RADIUS);
-
     let owned_assets = ball_assets.clone();
+    let increase_amount = ball_pool.allocate_balls(BALL_ONE_UNIT);
 
-    ball_pool.increase_current_ball_count(BALL_ONE_UNIT, move |increase_ammount: u16| {
+    if increase_amount > 0 {
         commands.spawn_batch(
-            (0..increase_ammount)
-                .map(move |_| get_ball_bundle(ball_pos.clone(), Vec2::Y, owned_assets.clone())),
+            (0..increase_amount)
+                .map(move |_| get_ball_bundle(ball_pos, Vec2::Y, owned_assets.clone())),
         );
-    });
+    }
 }
 
-// BUG: this function is not spawning-despawning correctly. Investigate why
 pub fn on_double_ball_requested(
     _: On<DoubleBallRequested>,
     mut commands: Commands,
@@ -53,72 +52,71 @@ pub fn on_double_ball_requested(
     let left_rot = Rot2::radians(FAN_ANGLE_RAD);
     let right_rot = Rot2::radians(-FAN_ANGLE_RAD);
 
-    ball_pool.increase_current_ball_count(
-        ball_query.iter().len() as u16 * 2,
-        move |spawned_balls: u16| {
-            commands.spawn_batch(
-                ball_query
-                    .iter()
-                    .flat_map(|(_, tf, vel)| {
-                        let base_dir = vel.xy().normalize_or(Vec2::Y);
+    let existing_ball_count = ball_query.iter().len() as u16;
+    let allowed_increase = ball_pool.allocate_balls(existing_ball_count);
 
-                        [
-                            get_ball_bundle(
-                                tf.translation.xy(),
-                                left_rot * base_dir,
-                                ball_assets.clone(),
-                            ),
-                            get_ball_bundle(
-                                tf.translation.xy(),
-                                right_rot * base_dir,
-                                ball_assets.clone(),
-                            ),
-                        ]
-                    })
-                    .take(spawned_balls as usize)
-                    .collect::<Vec<_>>(),
-            );
+    if allowed_increase == 0 {
+        return;
+    }
 
-            ball_query
-                .iter()
-                .take(spawned_balls as usize)
-                .for_each(|(entity, _, _)| {
-                    commands.entity(entity).despawn();
-                });
-        },
-    );
+    let mut bundles_to_spawn = Vec::with_capacity(allowed_increase as usize * 2);
+    for (entity, tf, vel) in ball_query.iter().take(allowed_increase as usize) {
+        let base_dir = vel.xy().normalize_or(Vec2::Y);
+        let pos = tf.translation.xy();
+
+        bundles_to_spawn.push(get_ball_bundle(
+            pos,
+            left_rot * base_dir,
+            ball_assets.clone(),
+        ));
+        bundles_to_spawn.push(get_ball_bundle(
+            pos,
+            right_rot * base_dir,
+            ball_assets.clone(),
+        ));
+
+        commands.entity(entity).despawn();
+    }
+
+    commands.spawn_batch(bundles_to_spawn);
 }
 
 pub fn on_triple_ball_requested(
     _: On<TripleBallRequested>,
     mut commands: Commands,
+    mut ball_pool: ResMut<BallPool>,
     ball_assets: Res<BallAssets>,
     ball_query: Query<(&Transform, &LinearVelocity), With<Ball>>,
 ) {
     let left_rot = Rot2::radians(FAN_ANGLE_RAD);
     let right_rot = Rot2::radians(-FAN_ANGLE_RAD);
 
-    let ball_bundles = ball_query
-        .iter()
-        .flat_map(|(tf, vel)| {
-            let base_dir = vel.xy().normalize_or(Vec2::Y);
+    let existing_count = ball_query.iter().len() as u16;
+    let requested_increase = existing_count * 2;
+    let allowed_increase = ball_pool.allocate_balls(requested_increase);
+    if allowed_increase == 0 {
+        return;
+    }
 
-            [
-                get_ball_bundle(
-                    tf.translation.xy(),
-                    left_rot * base_dir,
-                    ball_assets.clone(),
-                ),
-                get_ball_bundle(
-                    tf.translation.xy(),
-                    right_rot * base_dir,
-                    ball_assets.clone(),
-                ),
-            ]
-        })
-        .collect::<Vec<_>>();
+    let source_ball_limit = (allowed_increase / 2) as usize;
+    let mut bundles_to_spawn = Vec::with_capacity(allowed_increase as usize);
+    for (tf, vel) in ball_query.iter().take(source_ball_limit) {
+        let base_dir = vel.xy().normalize_or(Vec2::Y);
+        let pos = tf.translation.xy();
 
-    commands.spawn_batch(ball_bundles);
+        bundles_to_spawn.push(get_ball_bundle(
+            pos,
+            left_rot * base_dir,
+            ball_assets.clone(),
+        ));
+        bundles_to_spawn.push(get_ball_bundle(
+            pos,
+            right_rot * base_dir,
+            ball_assets.clone(),
+        ));
+    }
+
+    commands.spawn_batch(bundles_to_spawn);
 }
 
 pub fn on_reverse_ball_requested(

@@ -44,35 +44,22 @@ impl Default for BallPool {
 }
 
 impl BallPool {
-    pub fn increase_current_ball_count<F>(&mut self, increment: u16, spawn_balls: F)
-    where
-        F: FnOnce(u16),
-    {
-        if self.max_capacity - self.current_ball_count <= 0 {
-            return;
+    pub fn allocate_balls(&mut self, increment: u16) -> u16 {
+        if self.current_ball_count >= self.max_capacity {
+            return 0;
         }
 
-        let spawned_balls = if self.current_ball_count + increment > self.max_capacity {
-            self.max_capacity - self.current_ball_count
-        } else {
-            increment
-        };
+        let allowed_space = self.max_capacity - self.current_ball_count;
+        let spawned_balls = increment.min(allowed_space);
 
         self.current_ball_count += spawned_balls;
-        spawn_balls(spawned_balls);
+        spawned_balls
     }
 
-    pub fn decrease_current_ball_count<F>(&mut self, decrement: u16, despawn_balls: F)
-    where
-        F: FnOnce(u16),
-    {
-        self.current_ball_count = if self.current_ball_count < decrement {
-            0
-        } else {
-            self.current_ball_count - decrement
-        };
-
-        despawn_balls(1);
+    pub fn deallocate_balls(&mut self, decrement: u16) -> u16 {
+        let actual_removed = self.current_ball_count.min(decrement);
+        self.current_ball_count -= actual_removed;
+        actual_removed
     }
 }
 
