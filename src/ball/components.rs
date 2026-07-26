@@ -1,14 +1,17 @@
 use bevy::{
     asset::{Assets, Handle},
     ecs::{component::Component, resource::Resource, world::FromWorld},
-    math::Vec2,
     mesh::Mesh,
     sprite_render::ColorMaterial,
 };
 
-use crate::ball::constants::{BALL_COLOR, BALL_POOL_MAX_CAPACITY, BALL_SHAPE};
+use crate::{
+    ball::constants::{BALL_COLOR, BALL_POOL_MAX_CAPACITY, BALL_SHAPE},
+    common::components::{Bounceable, Damage},
+};
 
 #[derive(Component, Default, Clone, Debug)]
+#[require(Damage, Bounceable)]
 pub struct Ball;
 
 #[derive(Resource, Clone)]
@@ -61,9 +64,4 @@ impl BallPool {
         self.current_ball_count -= actual_removed;
         actual_removed
     }
-}
-
-#[derive(Component, Clone)]
-pub struct BallLaunchPoint {
-    pub surface_offset: Vec2,
 }

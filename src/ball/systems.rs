@@ -1,8 +1,13 @@
-use crate::ball::{
-    bundle::get_ball_bundle,
-    components::{Ball, BallAssets, BallLaunchPoint, BallPool},
-    constants::{BALL_ONE_UNIT, BALL_RADIUS, FAN_ANGLE_RAD},
-    events::{DoubleBallRequested, LaunchBallRequested, ReverseBallRequested, TripleBallRequested},
+use crate::{
+    ball::{
+        bundle::get_ball_bundle,
+        components::{Ball, BallAssets, BallPool},
+        constants::{BALL_ONE_UNIT, BALL_RADIUS, FAN_ANGLE_RAD},
+        events::{
+            DoubleBallRequested, LaunchBallRequested, ReverseBallRequested, TripleBallRequested,
+        },
+    },
+    common::components::LaunchPoint,
 };
 use avian2d::dynamics::rigid_body::{
     LinearVelocity,
@@ -27,7 +32,7 @@ pub fn on_launch_ball_requested(
     mut commands: Commands,
     mut ball_pool: ResMut<BallPool>,
     ball_assets: Res<BallAssets>,
-    launch_point: Single<(&Transform, &BallLaunchPoint), Without<Ball>>,
+    launch_point: Single<(&Transform, &LaunchPoint), Without<Ball>>,
 ) {
     let (transform, launch) = *launch_point;
     let ball_pos = transform.translation.xy() + launch.surface_offset + Vec2::new(0., BALL_RADIUS);

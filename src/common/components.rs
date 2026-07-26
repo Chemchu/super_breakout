@@ -48,3 +48,8 @@ impl Health {
         }
     }
 }
+
+#[derive(Component, Clone)]
+pub struct LaunchPoint {
+    pub surface_offset: Vec2,
+}

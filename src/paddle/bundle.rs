@@ -22,9 +22,8 @@ use bevy_enhanced_input::{
 use bevy_input::keyboard::KeyCode;
 
 use crate::{
-    ball::components::BallLaunchPoint,
     common::{
-        components::{BounceDeflector, Pause},
+        components::{BounceDeflector, LaunchPoint, Pause},
         physical_layers::CollisionLayer,
     },
     input::slots::{Slot1, Slot2, Slot3, Slot4, Slot5},
@@ -53,7 +52,7 @@ pub fn get_paddle_bundle() -> impl Bundle {
             max_angle: BOUNCE_MAX_ANGLE,
             dead_zone: PADDLE_OFFSET_MARGIN,
         },
-        BallLaunchPoint {
+        LaunchPoint {
             surface_offset: Vec2::new(0., PADDLE_HEIGHT / 2.0),
         },
         sprite,
