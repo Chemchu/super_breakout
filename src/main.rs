@@ -3,6 +3,7 @@ use bevy::{DefaultPlugins, app::App, state::app::AppExtStates};
 mod ball;
 mod common;
 mod game_orchestrator;
+mod game_ui;
 mod input;
 mod paddle;
 mod wall;
@@ -11,6 +12,7 @@ use crate::common::game_states::AppState;
 use ball::BallPlugin;
 use common::CommonPlugin;
 use game_orchestrator::GameOrchestratorPlugin;
+use game_ui::GameUIPlugin;
 use input::InputPlugin;
 use paddle::PaddlePlugin;
 use wall::WallPlugin;
@@ -30,6 +32,7 @@ fn main() {
             PaddlePlugin,
             WallPlugin,
             GameOrchestratorPlugin,
+            GameUIPlugin,
         ))
         .run();
 }
