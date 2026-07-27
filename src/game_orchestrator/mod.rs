@@ -47,5 +47,6 @@ fn setup_default_loadout(mut loadout: ResMut<ActionLoadout>) {
         (ActionSlot::Slot2, GameEffect::DoubleBall),
         (ActionSlot::Slot3, GameEffect::TripleBall),
         (ActionSlot::Slot4, GameEffect::ReverseBall),
+        (ActionSlot::Slot5, GameEffect::SlowTime),
     ]));
 }

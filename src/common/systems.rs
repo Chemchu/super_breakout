@@ -10,16 +10,21 @@ use bevy::{
         entity::Entity,
         observer::On,
         query::With,
-        system::{Commands, Query},
+        system::{Commands, Query, ResMut},
+        world::World,
     },
     math::Vec2,
+    time::{DelayedCommandsExt, Time, Virtual},
     transform::components::Transform,
 };
 use bevy_enhanced_input::action::events::Start;
 
-use crate::common::{
-    components::{BounceDeflector, Bounceable, Damage, Health, NeedsImpulse, Pause},
-    events::Died,
+use crate::{
+    ball::events::SlowTimeRequested,
+    common::{
+        components::{BounceDeflector, Bounceable, Damage, Health, NeedsImpulse, Pause},
+        events::Died,
+    },
 };
 
 pub fn on_damageable_collision(
@@ -95,4 +100,24 @@ pub fn on_bounce_collision(
 pub fn on_pause_toggle(on: On<Start<Pause>>) {
     println!("Pause: {:#?}", on.value);
     // TODO: toggle AppState between InGame and Paused via NextState<AppState>
+}
+
+pub fn on_slow_time_requested(
+    _: On<SlowTimeRequested>,
+    mut commands: Commands,
+    mut time: ResMut<Time<Virtual>>,
+) {
+    let slowed_time_ratio = 0.2_f32;
+    let slowed_time_duration = 3.0_f32;
+    let slowed_time_duration_adjusted = slowed_time_duration * slowed_time_ratio;
+    time.set_relative_speed(slowed_time_ratio);
+    commands
+        .delayed()
+        .secs(slowed_time_duration_adjusted)
+        .queue(|world: &mut World| {
+            world
+                .get_resource_mut::<Time<Virtual>>()
+                .unwrap()
+                .set_relative_speed(1.0_f32);
+        });
 }

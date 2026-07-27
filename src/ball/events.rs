@@ -11,3 +11,6 @@ pub struct TripleBallRequested;
 
 #[derive(Event)]
 pub struct ReverseBallRequested;
+
+#[derive(Event)]
+pub struct SlowTimeRequested;
