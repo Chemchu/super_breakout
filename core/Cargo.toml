@@ -1,25 +1,14 @@
-[workspace]
-resolver = "2"
-members = [
-    "common",
-    "input",
-    "ball",
-    "wall",
-    "paddle",
-    "game_ui",
-    "game_orchestrator",
-]
+[package]
+name = "core"
+version = "0.1.0"
+edition = "2024"
 
-[workspace.dependencies]
-bevy = { version = "0.19.0", features = ["debug"] }
-bevy_input = { version = "0.19.0" }
-bevy_enhanced_input = { version = "0.26.0" }
-avian2d = { version = "0.7.0" }
-
-# Enable a small amount of optimization in the dev profile.
-[profile.dev]
-opt-level = 1
-
-# Enable a large amount of optimization in the dev profile for dependencies.
-[profile.dev.package."*"]
-opt-level = 3
+[dependencies]
+bevy = { workspace = true }
+common = { path = "common" }
+input = { path = "input" }
+ball = { path = "ball" }
+paddle = { path = "paddle" }
+wall = { path = "wall" }
+game_ui = { path = "game_ui" }
+game_orchestrator = { path = "game_orchestrator" }
