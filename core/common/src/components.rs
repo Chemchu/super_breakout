@@ -40,8 +40,21 @@ impl Health {
         }
     }
 
-    pub fn take_damage(&mut self, mut commands: Commands, damage: f32, entity: Entity) {
-        self.value -= damage;
+    pub fn take_damage(
+        &mut self,
+        mut commands: Commands,
+        damage: f32,
+        mass: f32,
+        linear_velocity: f32,
+        entity: Entity,
+    ) {
+        println!(
+            "Damage {:#?}, mass {:#?}, linear_velocity {:#?}",
+            damage, mass, linear_velocity
+        );
+        let actual_damage = damage * mass * linear_velocity;
+        println!("Actual damage {:#?}", actual_damage);
+        self.value -= actual_damage;
 
         if self.value <= 0.0 {
             commands.trigger(Died { entity });

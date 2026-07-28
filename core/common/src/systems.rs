@@ -1,6 +1,7 @@
 use avian2d::{
     collision::collision_events::CollisionStart,
     dynamics::rigid_body::{
+        LinearVelocity,
         forces::{Forces, ReadRigidBodyForces, WriteRigidBodyForces},
         mass_properties::components::ComputedMass,
     },
@@ -27,19 +28,31 @@ use crate::{
 pub fn on_damageable_collision(
     event: On<CollisionStart>,
     mut health_query: Query<&mut Health>,
-    damage_query: Query<&Damage>,
+    damage_query: Query<(&Damage, &ComputedMass, &LinearVelocity)>,
     commands: Commands,
 ) {
     let (entity_a, entity_b) = (event.collider1, event.collider2);
 
-    if let (Ok(mut health), Ok(damage)) =
+    if let (Ok(mut health), Ok((damage, computed_mass, linear_vel))) =
         (health_query.get_mut(entity_a), damage_query.get(entity_b))
     {
-        health.take_damage(commands, damage.0, entity_a);
-    } else if let (Ok(mut health), Ok(damage)) =
+        health.take_damage(
+            commands,
+            damage.0,
+            computed_mass.value(),
+            linear_vel.length(),
+            entity_a,
+        );
+    } else if let (Ok(mut health), Ok((damage, computed_mass, linear_vel))) =
         (health_query.get_mut(entity_b), damage_query.get(entity_a))
     {
-        health.take_damage(commands, damage.0, entity_b);
+        health.take_damage(
+            commands,
+            damage.0,
+            computed_mass.value(),
+            linear_vel.length(),
+            entity_b,
+        );
     }
 }
 
