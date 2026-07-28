@@ -1,0 +1,20 @@
+[package]
+name = "app"
+version = "0.1.0"
+edition = "2024"
+
+[[bin]]
+name = "super_breakout"
+path = "src/main.rs"
+
+[dependencies]
+bevy = { workspace = true }
+avian2d = { workspace = true }
+bevy_enhanced_input = { workspace = true }
+common = { path = "../core/common" }
+input = { path = "../core/input" }
+ball = { path = "../core/ball" }
+paddle = { path = "../core/paddle" }
+wall = { path = "../core/wall" }
+game_ui = { path = "../core/game_ui" }
+game_orchestrator = { path = "../core/game_orchestrator" }

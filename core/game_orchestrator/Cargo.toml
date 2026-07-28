@@ -1,0 +1,10 @@
+[package]
+name = "game_orchestrator"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+bevy = { workspace = true }
+common = { path = "../common" }
+paddle = { path = "../paddle" }
+wall = { path = "../wall" }
