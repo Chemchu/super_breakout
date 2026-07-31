@@ -1,4 +1,4 @@
-use bevy::ecs::{entity::Entity, event::Event, event::EntityEvent};
+use bevy::ecs::{entity::Entity, event::EntityEvent, event::Event};
 
 #[derive(EntityEvent)]
 pub struct Died {
@@ -19,3 +19,9 @@ pub struct ReverseBallRequested;
 
 #[derive(Event)]
 pub struct SlowTimeRequested;
+
+#[derive(Event)]
+pub struct DashRequested;
+
+#[derive(Event)]
+pub struct RejectionRequested;

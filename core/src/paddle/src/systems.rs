@@ -1,3 +1,4 @@
+use crate::components::Paddle;
 use bevy::{
     ecs::{
         observer::On,
@@ -9,11 +10,10 @@ use bevy::{
     transform::components::Transform,
 };
 use bevy_enhanced_input::action::events::Fire;
-
-use crate::components::{Paddle, PaddleHorizontalMovement};
+use input::components::LeftStickAxis;
 
 pub fn on_paddle_move(
-    on: On<Fire<PaddleHorizontalMovement>>,
+    on: On<Fire<LeftStickAxis>>,
     mut paddle_transform: Single<&mut Transform, With<Paddle>>,
     timer: Res<Time>,
 ) {

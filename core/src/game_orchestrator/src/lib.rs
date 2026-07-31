@@ -11,8 +11,12 @@ use bevy::{
 };
 
 use common::effects::{ActionLoadout, ActionSlot, GameEffect};
-use paddle::bundle::get_paddle_bundle;
-use wall::{bundle::get_wall_bundle, constants::{WALL_COLOR, WALL_SHAPE}};
+use input::components::get_input_manager;
+use paddle::components::get_paddle_bundle;
+use wall::{
+    components::get_wall_bundle,
+    constants::{WALL_COLOR, WALL_SHAPE},
+};
 
 pub struct GameOrchestratorPlugin;
 
@@ -28,6 +32,7 @@ fn setup_game(
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
     commands.spawn(Camera2d);
+    commands.spawn(get_input_manager());
     commands.spawn(get_paddle_bundle());
 
     let wall_pos = Vec3::new(0., 400., 0.);
@@ -43,5 +48,7 @@ fn setup_default_loadout(mut loadout: ResMut<ActionLoadout>) {
         (ActionSlot::Slot3, GameEffect::TripleBall),
         (ActionSlot::Slot4, GameEffect::ReverseBall),
         (ActionSlot::Slot5, GameEffect::SlowTime),
+        (ActionSlot::Slot6, GameEffect::Dash),
+        (ActionSlot::Slot7, GameEffect::Rejection),
     ]));
 }

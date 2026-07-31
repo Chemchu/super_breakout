@@ -2,8 +2,8 @@ use bevy::ecs::{resource::Resource, system::Commands};
 use std::collections::HashMap;
 
 use crate::events::{
-    DoubleBallRequested, LaunchBallRequested, ReverseBallRequested, SlowTimeRequested,
-    TripleBallRequested,
+    DashRequested, DoubleBallRequested, LaunchBallRequested, RejectionRequested,
+    ReverseBallRequested, SlowTimeRequested, TripleBallRequested,
 };
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -13,7 +13,9 @@ pub enum GameEffect {
     TripleBall,
     ReverseBall,
     SlowTime,
-    // future: SlowTime, MultiBall, Shield...
+    Dash,
+    Rejection, // Elden ring shockwave
+               // future: SlowTime, MultiBall, Shield...
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -52,5 +54,7 @@ pub fn dispatch(effect: GameEffect, commands: &mut Commands) {
         GameEffect::TripleBall => commands.trigger(TripleBallRequested),
         GameEffect::ReverseBall => commands.trigger(ReverseBallRequested),
         GameEffect::SlowTime => commands.trigger(SlowTimeRequested),
+        GameEffect::Dash => commands.trigger(DashRequested),
+        GameEffect::Rejection => commands.trigger(RejectionRequested),
     }
 }

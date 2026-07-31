@@ -5,6 +5,7 @@ edition = "2024"
 
 [dependencies]
 bevy = { workspace = true }
+input = { path = "../input/" }
 common = { path = "../common" }
 paddle = { path = "../paddle" }
 wall = { path = "../wall" }

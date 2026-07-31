@@ -1,16 +1,15 @@
 use crate::{
-    bundle::get_ball_bundle,
-    components::{Ball, BallAssets, BallPool},
+    components::{Ball, BallAssets, BallPool, get_ball_bundle},
     constants::{BALL_ONE_UNIT, BALL_RADIUS, FAN_ANGLE_RAD},
-};
-use common::{
-    components::LaunchPoint,
-    events::{DoubleBallRequested, LaunchBallRequested, ReverseBallRequested, TripleBallRequested},
 };
 use avian2d::dynamics::rigid_body::{
     LinearVelocity,
     forces::{ReadRigidBodyForces, WriteRigidBodyForces},
     mass_properties::components::ComputedMass,
+};
+use common::{
+    components::LaunchPoint,
+    events::{DoubleBallRequested, LaunchBallRequested, ReverseBallRequested, TripleBallRequested},
 };
 
 use avian2d::dynamics::rigid_body::forces::Forces;
