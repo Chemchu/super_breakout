@@ -33,6 +33,12 @@ pub struct Health {
 #[action_output(bool)]
 pub struct Pause;
 
+#[derive(Component, Default, Clone)]
+pub struct Dashable;
+
+#[derive(Component, Default, Clone)]
+pub struct Rejectable;
+
 impl Health {
     pub fn new(health_value: f32) -> Self {
         Health {

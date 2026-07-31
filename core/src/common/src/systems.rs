@@ -5,6 +5,7 @@ use avian2d::{
         forces::{Forces, ReadRigidBodyForces, WriteRigidBodyForces},
         mass_properties::components::ComputedMass,
     },
+    physics_transform::Position,
 };
 use bevy::{
     ecs::{
@@ -21,8 +22,10 @@ use bevy::{
 use bevy_enhanced_input::action::events::Start;
 
 use crate::{
-    components::{BounceDeflector, Bounceable, Damage, Health, NeedsImpulse, Pause},
-    events::{Died, SlowTimeRequested},
+    components::{
+        BounceDeflector, Bounceable, Damage, Dashable, Health, NeedsImpulse, Pause, Rejectable,
+    },
+    events::{DashRequested, Died, RejectionRequested, SlowTimeRequested},
 };
 
 pub fn on_damageable_collision(
@@ -130,4 +133,19 @@ pub fn on_slow_time_requested(
                 .unwrap()
                 .set_relative_speed(1.0_f32);
         });
+}
+
+pub fn on_dash_requested(
+    _: On<DashRequested>,
+    mut dashable_query: Query<(&mut Position, &LinearVelocity), With<Dashable>>,
+) {
+    // TODO: implement dash
+}
+
+pub fn on_rejection_requested(
+    _: On<RejectionRequested>,
+    mut rejectable_query: Query<(Forces, &Position, &ComputedMass), With<Rejectable>>,
+) {
+    // TODO: implement reject (shockwave) by applying big impulse. Calc the vector between shockware
+    // origin and rejectable object
 }
