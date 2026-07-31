@@ -15,11 +15,11 @@ use bevy::{
     transform::components::Transform,
 };
 
-use common::{components::Health, physical_layers::CollisionLayer};
 use crate::{
     components::Wall,
-    constants::{WALL_HEIGHT, WALL_WIDTH},
+    constants::{WALL_HEALTH, WALL_HEIGHT, WALL_WIDTH},
 };
+use common::{components::Health, physical_layers::CollisionLayer};
 
 pub fn get_wall_bundle(
     translation: Vec3,
@@ -28,7 +28,7 @@ pub fn get_wall_bundle(
 ) -> impl Bundle {
     (
         Wall,
-        Health::new(5.),
+        Health::new(WALL_HEALTH),
         Transform::from_translation(translation),
         Mesh2d(mesh),
         MeshMaterial2d(material),

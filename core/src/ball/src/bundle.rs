@@ -16,7 +16,7 @@ use bevy::{
 
 use crate::{
     components::{Ball, BallAssets},
-    constants::{BALL_MAX_SPEED, BALL_RADIUS, BALL_SPEED},
+    constants::{BALL_IMPULSE, BALL_MASS, BALL_MAX_SPEED, BALL_RADIUS},
 };
 use common::{
     components::{Bounceable, Damage, NeedsImpulse},
@@ -52,10 +52,10 @@ pub fn get_ball_bundle(
         ball: Ball::default(),
         damage: Damage(1.5_f32),
         needs_impulse: NeedsImpulse {
-            impulse: launch_direction.normalize_or_zero() * BALL_SPEED,
+            impulse: launch_direction.normalize_or_zero() * BALL_IMPULSE,
         },
         bounceable: Bounceable,
-        mass: Mass(1.0_f32),
+        mass: Mass(BALL_MASS),
         transform: Transform::from_translation(Vec3::new(translation.x, translation.y, 0.0)),
         mesh: Mesh2d(assets.mesh),
         material: MeshMaterial2d(assets.material),

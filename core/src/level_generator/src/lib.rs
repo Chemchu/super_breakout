@@ -1,7 +1,7 @@
 use bevy::app::{App, Plugin};
 
-pub struct GameUiPlugin;
+pub struct LevelGeneratorPlugin;
 
-impl Plugin for GameUiPlugin {
+impl Plugin for LevelGeneratorPlugin {
     fn build(&self, _app: &mut App) {}
 }

@@ -7,6 +7,7 @@ use common::{CommonPlugin, game_states::AppState};
 use game_orchestrator::GameOrchestratorPlugin;
 use game_ui::GameUiPlugin;
 use input::InputPlugin;
+use level_generator::LevelGeneratorPlugin;
 use paddle::PaddlePlugin;
 use wall::WallPlugin;
 
@@ -22,6 +23,7 @@ impl Plugin for CorePlugin {
             PaddlePlugin,
             GameUiPlugin,
             GameOrchestratorPlugin,
+            LevelGeneratorPlugin,
         ));
     }
 }

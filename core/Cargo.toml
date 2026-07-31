@@ -5,10 +5,11 @@ edition = "2024"
 
 [dependencies]
 bevy = { workspace = true }
-common = { path = "common" }
-input = { path = "input" }
-ball = { path = "ball" }
-paddle = { path = "paddle" }
-wall = { path = "wall" }
-game_ui = { path = "game_ui" }
-game_orchestrator = { path = "game_orchestrator" }
+common = { path = "src/common" }
+input = { path = "src/input" }
+ball = { path = "src/ball" }
+paddle = { path = "src/paddle" }
+wall = { path = "src/wall" }
+game_ui = { path = "src/game_ui" }
+game_orchestrator = { path = "src/game_orchestrator" }
+level_generator = { path = "src/level_generator" }

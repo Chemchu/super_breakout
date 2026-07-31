@@ -3,13 +3,13 @@ resolver = "2"
 members = [
   "app", 
   "core",
-  "core/common",
-  "core/input",
-  "core/ball",
-  "core/paddle",
-  "core/wall",
-  "core/game_ui",
-  "core/game_orchestrator",
+  "core/src/common",
+  "core/src/input",
+  "core/src/ball",
+  "core/src/paddle",
+  "core/src/wall",
+  "core/src/game_ui",
+  "core/src/game_orchestrator",
 ]
 
 [workspace.dependencies]
